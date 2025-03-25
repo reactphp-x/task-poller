@@ -1,0 +1,30 @@
+{
+    "name": "reactphp-x/task-poller",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "ReactphpX\\TaskPoller\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "wpjscc",
+            "email": "wpjscc@gmail.com"
+        }
+    ],
+    "require": {
+        "reactphp-x/limiter-concurrent": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.1",
+        "react/async": "^4.3"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ReactphpX\\TaskPoller\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    }
+}
