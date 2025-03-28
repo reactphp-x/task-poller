@@ -109,7 +109,7 @@ class TaskPoller
         }
         
         return TaskPollerManager::getInstance($this->managerName)->getConcurrent()->concurrent(
-            fn() => $initialRequest()->then(function ($response) use ($statusRequest, $successHandler) {
+            fn() => \React\Promise\resolve($initialRequest())->then(function ($response) use ($statusRequest, $successHandler) {
                 return \React\Promise\resolve(($this->statusDataExtractor)($response, $this->cancelled))->then(function ($extractedData) use ($statusRequest, $successHandler) {
                     return $this->startPolling($statusRequest, $extractedData, 0, $successHandler);
                 });
