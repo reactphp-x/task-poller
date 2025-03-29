@@ -36,7 +36,8 @@ class TaskPoller
         private $concurrency = 1,
         private $interval = 1000,
         private $maxAttempts = 100,
-        private $statusChecker = null
+        private $statusChecker = null,
+        private $statusDataExtractor = null
     ) {
         // 初始化当前全局任务管理器
         $this->limiter = new LimiterConcurrent($concurrency, $interval);
@@ -63,25 +64,28 @@ class TaskPoller
             };
         }
 
-        // Default data extractor
-        $this->statusDataExtractor = function ($response, $cancelled) {
-            if ($cancelled) {
-                throw new TaskCancelledException('Polling cancelled');
-            }
-            
-            $data = $response;
-            if (is_object($response) && method_exists($response, 'getBody')) {
-                $data = json_decode((string)$response->getBody(), true);
-            }
-            if (is_object($data)) {
-                $data = (array)$data;
-            }
-            
-            return [
-                'taskId' => $data['id'] ?? null,
-                'extraData' => $data
-            ];
-        };
+        if ($this->statusDataExtractor === null) {
+            // Default data extractor
+            $this->statusDataExtractor = function ($response, $cancelled) {
+                if ($cancelled) {
+                    throw new TaskCancelledException('Polling cancelled');
+                }
+                
+                $data = $response;
+                if (is_object($response) && method_exists($response, 'getBody')) {
+                    $data = json_decode((string)$response->getBody(), true);
+                }
+                if (is_object($data)) {
+                    $data = (array)$data;
+                }
+                
+                return [
+                    'taskId' => $data['id'] ?? null,
+                    'extraData' => $data
+                ];
+            };
+        }
+        
     }
 
     public function setStatusDataExtractor(callable $extractor): self
